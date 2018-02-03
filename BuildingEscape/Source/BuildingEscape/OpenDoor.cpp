@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OpenDoor.h"
+#define OUT
 
 
 // Sets default values for this component's properties
@@ -19,7 +20,11 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	Owner = GetOwner();
+	if (!PressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate"), *GetOwner()->GetName())
+	}
 	
 }
 
@@ -29,6 +34,32 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass)
+	{
+		OnOpen.Broadcast();
+	}
+	else
+	{
+		OnClose.Broadcast();
+	}
+}
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
+{
+	float TotalMass = 0.f;
+
+	// Find all the overlapping actors
+	TArray<AActor*> OverlappingActors;
+	if (!PressurePlate) { return TotalMass; }
+	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
+
+	// Iterate through them adding their masses
+	for (const auto& Actor : OverlappingActors)
+	{
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("%s on pressure plate"), *Actor->GetName())
+	}
+
+	return TotalMass;
 }
 
