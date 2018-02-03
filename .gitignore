@@ -50,6 +50,7 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
+*/Binaries
 
 # Builds
 Build/*
@@ -76,3 +77,5 @@ DerivedDataCache/*
 
 BuildingEscape/Content/StarterContent/Textures
 BuildingEscape/Content/StarterContent/HDRI
+BuildingEscape/Saved/
+BuildingEscape/Intermediate/
